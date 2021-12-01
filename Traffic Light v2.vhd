@@ -10,7 +10,6 @@ use ieee.numeric_std.all;
 -- zebraRed, zebraGreen: zebra crossing lights EW-NS order
 
 entity controller is
-
 	port(
 		clr: in std_logic;
 		clk: in std_logic
@@ -29,12 +28,11 @@ architecture arch of controller is
 	signal Tl, Ts    : std_logic := '0'; -- signals to trigger timer function : Tl - long time, Ts - short time
 	
 	type states is (S0, S1, S2, S3, S4, S5, S6, S7);
-	signal state : states;
+	signal PS, NS : states;
 	
 	type tipe_lampu is (RED, GREEN, YELLOW);
 	signal N,W,E,S : tipe_lampu;
 	
-	signal PS, NS;
 
 begin --architecture
 
@@ -43,7 +41,7 @@ begin --architecture
 	begin
 	
 		if clr = '1' then
-			PS <= PS;
+			PS <= S0;
 		elsif timeout = '1' and rising_edge(clk) then
 			PS <= NS;
 		end if;
@@ -51,77 +49,73 @@ begin --architecture
     end process;
 
     -- combinational circuit which maps present state to correspongind lights
-    comb: process (state)
+    comb: process (PS)
     begin
         Tl <= '0'; Ts <= '0';
         case PS is
             when S0 =>
                 -- NW yellow and all others RED
-				N, W <= YELLOW;
-				E, S <= RED;
+				N <= YELLOW; E <= RED;
+				W <= YELLOW; S <= RED;
 
-                -- start timer
-                Ts <= '1';
+                Ts <= '1'; -- start timer
+				NS <= S1;  -- Next State
             
             when S1 =>
                 -- N - green, and all others RED
-                N 		<= GREEN;
-				E, S, W <= RED;
-
-                -- start timer
-                Tl <= '1';
-            
+				N <= GREEN; E <= RED; 
+				S <= RED;   W <= RED;
+				
+                Tl <= '1'; -- start timer		
+				NS <= S2;  -- Next State
+				
             when S2 =>
                 -- NE yellow and all others RED
-                N, E <= YELLOW;
-				S, W <= RED;
+                N <= YELLOW; S <= RED;
+				E <= YELLOW; W <= RED;
 
-                -- start timer
-                Ts <= '1';
-            
-            
+                Ts <= '1'; -- start timer
+				NS <= S3;  -- Next State
+				
             when S3 =>
                 -- E - green, and all others RED
-				E <= GREEN;
-				N, S, W <= RED;
+				E <= GREEN; N <= RED;
+				S <= RED;	W <= RED;
 
-                -- start timer
-                Tl <= '1';
-
+                Tl <= '1'; -- start timer
+				NS <= S4;  -- Next State
+				
             when S4 =>
                 -- ES yellow and all others RED
-				E, S <= YELLOW;
-				N, W <= RED;
+				E <= YELLOW; N <= RED;
+				S <= YELLOW; W <= RED;
 
-                -- start timer
-                Ts <= '1';
+                Ts <= '1'; -- start timer
+				NS <= S5;  -- Next State
             
             when S5 =>
                 -- S - green, and all others RED
-				S <= GREEN;
-				N, E, W <= RED;
+				S <= GREEN; N <= RED;
+				E <= RED;	W <= RED;
 
-                -- start timer
-                Tl <= '1';
-
+                Tl <= '1'; -- start timer
+				NS <= S6;  -- Next State
+				
             when S6 =>
                 -- SW yellow and all others RED
-				S, W <= YELLOW;
-				N, E <= RED;
+				S <= YELLOW; N <= RED;
+				W <= YELLOW; E <= RED;
 
-                -- start timer
-                Ts <= '1';
+                Ts <= '1'; -- start timer
+				NS <= S7;  -- Next State
             
             when S7 =>
                 -- W - green, and all others RED
-				W <= GREEN;
-				N, E, S <= RED;
+				W <= GREEN; N <= RED;
+				E <= RED;	S <= RED;
 
-                -- start timer
-                Tl 	  <= '1';
-				
-				--back to state 0
-				state <= S0;
+                Tl <= '1'; -- start timer
+				NS <= S0;  -- Next State
 
         end case;
     end process;
