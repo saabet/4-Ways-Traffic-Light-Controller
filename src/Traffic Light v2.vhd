@@ -16,7 +16,6 @@ entity controller is
 	);
 end controller;
 
-
 architecture arch of controller is
 
 	-- used in timer to generate delay
@@ -31,7 +30,7 @@ architecture arch of controller is
 	signal PS, NS : states;
 	
 	type tipe_lampu is (RED, GREEN, YELLOW);
-	signal N,W,E,S : tipe_lampu;
+	signal N,W,E,S : tipe_lampu; -- N for North, E for East, S for South, W for West.
 	
 
 begin --architecture
@@ -140,7 +139,7 @@ begin --architecture
                     count := count +1;
                 end if;
         end loop;
-		  timeout <= '1';
+		timeout <= '1';
                 
         end if;
     end process;
