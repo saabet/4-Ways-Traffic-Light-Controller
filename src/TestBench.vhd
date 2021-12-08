@@ -16,6 +16,14 @@ architecture test of testbenchTL is
 			West  : out std_logic_vector(2 downto 0)
 		);
 	end component;
+
+	component decoder is
+		port(
+			clk      : in std_logic;
+			bcd_in   : in std_logic_vector(3 downto 0);  -- 4 bit BCD input
+			segment7 : out std_logic_vector(6 downto 0)  -- 7 bit decoded output.
+		);
+	end component;
 	
 	signal clk : std_logic := '0';
 	signal clr : std_logic := '0';
@@ -39,14 +47,14 @@ begin
 		counter_clk <= counter_clk + 1; --count the clock cycle.
 		wait for clk_period/2;  --for next 0.5 ns signal is '1'.
 		
-		if(counter_clk = 35) then
+		if(counter_clk = 35) then -- change clr to 1 in state S3 to reset state back
 			clr <= '1';
 			assert North = "001" report "Output tidak sesuai!" severity warning;
 			assert East  = "100" report "Output tidak sesuai!" severity warning;
 			assert South = "001" report "Output tidak sesuai!" severity warning;
 			assert West  = "001" report "Output tidak sesuai!" severity warning;
 		
-		elsif(counter_clk = 36) then
+		elsif(counter_clk = 36) then -- change clr to 0, state
 			clr <= '0';
 			assert North = "010" report "Output tidak sesuai!" severity warning;
 			assert East  = "001" report "Output tidak sesuai!" severity warning;
