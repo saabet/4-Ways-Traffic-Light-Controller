@@ -17,13 +17,6 @@ architecture test of testbenchTL is
 		);
 	end component;
 
-	component decoder is
-		port(
-			clk      : in std_logic;
-			bcd_in   : in std_logic_vector(3 downto 0);  -- 4 bit BCD input
-			segment7 : out std_logic_vector(6 downto 0)  -- 7 bit decoded output.
-		);
-	end component;
 	
 	signal clk : std_logic := '0';
 	signal clr : std_logic := '0';
